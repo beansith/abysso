@@ -1,0 +1,315 @@
+/* ──────────────────────────────────────────────────────────────────────
+   ABYSSO — système de modes (Clinique / Surveillance / Interférence)
+   Chaque mode définit un jeu de variables --mode-*. Les composants de
+   src/modes/* ne lisent jamais une couleur en dur : ils consomment ces
+   tokens, ce qui évite de tripler chaque règle de style.
+   ────────────────────────────────────────────────────────────────────── */
+
+@keyframes abysso-recpulse  { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
+@keyframes abysso-blink     { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes abysso-eq        { 0%, 100% { transform: scaleY(.22); } 50% { transform: scaleY(1); } }
+@keyframes abysso-gatein    { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes abysso-glitchA   { 0%, 100% { transform: translate(0,0); } 20% { transform: translate(-3px,1px); } 40% { transform: translate(2px,-1px); } 60% { transform: translate(-2px,0); } 80% { transform: translate(1px,1px); } }
+@keyframes abysso-glitchB   { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(3px,-1px); } 50% { transform: translate(-2px,1px); } 75% { transform: translate(2px,0); } }
+@keyframes abysso-flick     { 0%, 100% { opacity: 0; } 48% { opacity: 0; } 50% { opacity: .16; } 52% { opacity: 0; } 93% { opacity: 0; } 95% { opacity: .1; } 97% { opacity: 0; } }
+@keyframes abysso-sweepy    { 0% { top: -30%; } 100% { top: 130%; } }
+@keyframes abysso-winopen   { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes cl-breathe       { 0%, 100% { opacity: .94; filter: contrast(1); } 50% { opacity: 1; filter: contrast(1.015); } }
+@keyframes cl-skip          {
+  0%, 96.5%, 100% { transform: translate(0,0); opacity: 1; }
+  97%  { transform: translate(-1.5px,.5px); opacity: .85; }
+  97.4% { transform: translate(1px,-.5px); opacity: .92; }
+  97.8% { transform: translate(0,1px); opacity: .8; }
+  98.2% { transform: translate(-.5px,0); opacity: .96; }
+  98.6% { transform: translate(0,0); opacity: 1; }
+}
+
+
+/* ── Mode CLINIQUE : dossier médical archivé, parchemin vieilli, hairlines ── */
+body[data-mode='clinique'] {
+  --mode-bg:            #c7b89a;
+  --mode-bg-2:          #ccbea1;
+  --mode-bg-3:          #d2c6a9;
+  --mode-text:          #211a10;
+  --mode-text-soft:     #352a1b;
+  --mode-text-mute:     #4a3c28;
+  --mode-text-sub:      #5c4c34;
+  --mode-text-faint:    #84714f;
+  --mode-border:        rgba(33,26,16,0.26);
+  --mode-border-strong: rgba(33,26,16,0.42);
+  --mode-accent:        #6e0f0f;
+  --mode-accent-bright: #8a1414;
+  --mode-positive:      #2c4a30;
+  --mode-font-display:  'EB Garamond', serif;
+  --mode-font-mono:     'IBM Plex Mono', monospace;
+  --mode-font-body:     'DM Sans', sans-serif;
+}
+
+/* ── Mode SURVEILLANCE : console CCTV, vert/sombre, scanlines ── */
+body[data-mode='surveillance'] {
+  --mode-bg:            #07090a;
+  --mode-bg-2:          #0b0f10;
+  --mode-bg-3:          #0a0e0f;
+  --mode-text:          #c4ccc2;
+  --mode-text-soft:     #bcc4ba;
+  --mode-text-mute:     #8b9189;
+  --mode-text-sub:      #7f8a78;
+  --mode-text-faint:    #6f7a6d;
+  --mode-border:        rgba(127,146,119,0.3);
+  --mode-border-strong: rgba(127,146,119,0.35);
+  --mode-accent:        #c0504a;
+  --mode-accent-bright: #d98a86;
+  --mode-positive:      #9fb295;
+  --mode-font-display:  'EB Garamond', serif;
+  --mode-font-mono:     'IBM Plex Mono', monospace;
+  --mode-font-body:     'IBM Plex Mono', monospace;
+}
+
+/* ── Mode INTERFÉRENCE : OS rétro corrompu, glitch, scanlines rouges ── */
+body[data-mode='interference'] {
+  --mode-bg:            #0a0506;
+  --mode-bg-2:          #100a0b;
+  --mode-bg-3:          #150d0e;
+  --mode-text:          #d8c8c8;
+  --mode-text-soft:     #b8a8a8;
+  --mode-text-mute:     #9a8a8a;
+  --mode-text-sub:      #8a7a7a;
+  --mode-text-faint:    #7a6a6a;
+  --mode-border:        rgba(225,180,180,0.2);
+  --mode-border-strong: rgba(225,180,180,0.22);
+  --mode-accent:        #e03a3a;
+  --mode-accent-bright: #f04a4a;
+  --mode-positive:      #7faa84;
+  --mode-font-display:  'EB Garamond', serif;
+  --mode-font-mono:     'IBM Plex Mono', monospace;
+  --mode-font-body:     'IBM Plex Mono', monospace;
+}
+
+/* ── Conteneur racine du shell ABYSSO (remplace .app pour les pages migrées) ── */
+
+/* Allègement du poids de la police display en mode Clinique : moins épais, plus délicat,
+   esprit "ancien livre" plutôt que titre UI massif. Surveillance/Interférence gardent
+   le poids 800 par défaut, pensé pour trancher sur fond sombre. */
+body[data-mode='clinique'] .cl-logo,
+body[data-mode='clinique'] .cl-feature-title,
+body[data-mode='clinique'] .cl-list-name,
+body[data-mode='clinique'] .cl-list-ep-title,
+body[data-mode='clinique'] .cl-dossier-title,
+body[data-mode='clinique'] .cl-page-title {
+  font-weight: 500;
+}
+body[data-mode='clinique'] .cl-note,
+body[data-mode='clinique'] .cl-feature-syn,
+body[data-mode='clinique'] .cl-synopsis,
+body[data-mode='clinique'] .cl-page-italic {
+  font-weight: 400;
+  font-style: italic;
+}
+
+.abysso-shell {
+  position: relative;
+  min-height: 100dvh;
+  background: var(--mode-bg);
+  color: var(--mode-text);
+  font-family: var(--mode-font-body);
+  padding-bottom: 96px;
+  transition: background-color .25s ease, color .25s ease;
+}
+
+/* Effet "vieux glitch" sur Clinique : respiration lente de contraste + accroc
+   occasionnel type photocopie qui grince, plutôt que le glitch numérique d'Interférence. */
+body[data-mode='clinique'] .abysso-shell {
+  animation: cl-breathe 9s ease-in-out infinite, cl-skip 14s linear infinite;
+}
+.cl-creak-fx { position: fixed; inset: 0; pointer-events: none; z-index: 58; display: none; }
+body[data-mode='clinique'] .cl-creak-fx {
+  display: block;
+  background: repeating-linear-gradient(to bottom, rgba(33,26,16,0) 0 18px, rgba(33,26,16,0.05) 19px, rgba(33,26,16,0) 20px);
+  opacity: 0;
+  animation: cl-creak 14s linear infinite;
+}
+@keyframes cl-creak {
+  0%, 96.4%, 99% { opacity: 0; }
+  96.6% { opacity: .5; }
+  97% { opacity: .15; }
+  97.4% { opacity: .4; }
+  97.8% { opacity: .1; }
+  98.2% { opacity: 0; }
+}
+
+/* Effets ambiants par mode, activés seulement quand le mode correspondant est actif */
+.abysso-fx { position: fixed; inset: 0; pointer-events: none; z-index: 60; display: none; }
+body[data-mode='surveillance'] .abysso-fx--scanlines {
+  display: block;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.42) 3px, rgba(0,0,0,0) 4px);
+}
+body[data-mode='surveillance'] .abysso-fx--vignette {
+  display: block; z-index: 61;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55) 100%);
+}
+body[data-mode='interference'] .abysso-fx--scanlines {
+  display: block;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 1px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0) 3px);
+}
+body[data-mode='interference'] .abysso-fx--flicker {
+  display: block; z-index: 61;
+  background: rgba(0,0,0,0.55);
+  animation: abysso-flick 5s infinite;
+}
+body[data-mode='interference'] .abysso-fx--vignette {
+  display: block; z-index: 61;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.6) 100%);
+}
+body[data-mode='interference'] .abysso-fx--sweep {
+  display: block; left: 0; right: 0; height: 120px;
+  background: linear-gradient(rgba(225,23,23,0), rgba(225,23,23,0.05), rgba(225,23,23,0));
+  animation: abysso-sweepy 7s linear infinite;
+}
+
+/* ── Mode switcher (badge fixe haut-droite) + slot d'auth, dans le même conteneur flex ──
+   Les couleurs viennent des variables --mode-* du mode actif : le badge et le bouton
+   Connexion changent donc d'apparence en même temps que la page (clair en Clinique,
+   sombre en Surveillance/Interférence), au lieu d'être figés en noir. */
+.mode-switcher-row {
+  position: fixed; top: 12px; right: 12px; z-index: 120;
+  display: flex; align-items: stretch; gap: 8px;
+}
+.mode-switcher {
+  display: flex; align-items: center; gap: 8px; box-sizing: border-box;
+  height: 36px; line-height: 1;
+  background: color-mix(in srgb, var(--mode-bg-2) 96%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mode-text) 45%, transparent);
+  padding: 0 8px 0 12px;
+  font-family: var(--mode-font-mono);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+}
+.mode-switcher-label { font-size: 9px; letter-spacing: .2em; color: var(--mode-text-sub); }
+.mode-switcher-btn {
+  cursor: pointer; font-size: 10px; width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--mode-border-strong); color: var(--mode-text-mute); background: transparent;
+}
+.mode-switcher-btn:hover { border-color: var(--mode-accent); }
+.mode-switcher-btn--active { border-color: var(--mode-accent); color: var(--mode-bg-2); background: var(--mode-accent); }
+.mode-switcher-gate { cursor: pointer; font-size: 13px; color: var(--mode-text-sub); padding: 0 2px; }
+.mode-switcher-gate:hover { color: var(--mode-text); }
+
+/* Bouton "Connexion" / nom d'utilisateur (rendu par Clerk côté App.tsx, classes auth-area/auth-btn/auth-name) */
+.auth-area {
+  display: flex; align-items: stretch; gap: 8px;
+  font-family: var(--mode-font-mono); font-size: 10.5px; letter-spacing: .14em;
+}
+.auth-name { display: flex; align-items: center; color: var(--mode-text-sub); }
+.auth-btn {
+  cursor: pointer; background: transparent; border: 1px solid color-mix(in srgb, var(--mode-text) 45%, transparent);
+  box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+  height: 36px; line-height: 1; padding: 0 14px; margin: 0;
+  color: var(--mode-text); font-family: var(--mode-font-mono);
+  font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+}
+.auth-btn:hover { border-color: var(--mode-accent); color: var(--mode-accent); }
+
+
+/* ──────────────────────────────────────────────────────────────────────
+   Gate — écran de sélection de mode. Indépendant des variables --mode-*
+   puisque les 3 cartes affichent leur identité visuelle simultanément.
+   ────────────────────────────────────────────────────────────────────── */
+.gate {
+  position: relative; min-height: 100dvh; background: #0a0705;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 70px 22px; overflow: hidden;
+}
+.gate-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 35%, rgba(0,0,0,0.7) 100%);
+}
+.gate-inner { position: relative; text-align: center; max-width: 1080px; width: 100%; }
+.gate-kicker {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .34em;
+  color: #8B0000; animation: abysso-gatein .6s both;
+}
+.gate-logo {
+  font-family: 'EB Garamond', serif; font-weight: 500; font-size: clamp(52px,11vw,120px);
+  line-height: .9; letter-spacing: .05em; color: #e9dfd4; margin: 14px 0 6px;
+  animation: abysso-gatein .6s .08s both;
+}
+.gate-sub {
+  font-family: 'IBM Plex Mono', monospace; font-size: clamp(10px,1.4vw,12px);
+  letter-spacing: .24em; color: #8a7f74; animation: abysso-gatein .6s .14s both;
+}
+.gate-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%,250px), 1fr));
+  gap: 16px; margin-top: 42px; text-align: left;
+}
+.gate-card {
+  cursor: pointer; border: 1px solid rgba(216,208,200,0.18);
+  padding: 24px 22px; min-height: 230px; display: flex; flex-direction: column;
+  position: relative; overflow: hidden; animation: abysso-gatein .6s .2s both;
+  transition: border-color .15s ease;
+}
+.gate-card:hover { border-color: #8B0000; }
+.gate-card-top { position: relative; display: flex; justify-content: space-between; align-items: baseline; }
+.gate-card-roman { font-family: 'EB Garamond', serif; font-size: 34px; }
+.gate-card-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; }
+.gate-card-title { position: relative; font-family: 'EB Garamond', serif; font-size: 30px; margin: 14px 0 8px; }
+.gate-card-desc { position: relative; font-family: 'DM Sans', sans-serif; font-size: 13.5px; line-height: 1.55; flex: 1; }
+
+.gate-card--clinique { background: #ece7db; color: #1c1813; }
+.gate-card--clinique .gate-card-roman { color: #8B0000; }
+.gate-card--clinique .gate-card-tag { color: #6a6155; }
+.gate-card--clinique .gate-card-desc { color: #544c41; }
+.gate-card-foot--lines {
+  margin-top: 14px; height: 34px; display: flex; flex-direction: column; justify-content: center;
+  gap: 4px; border-top: 1px solid rgba(28,24,19,0.18); padding-top: 10px;
+}
+.gate-card-foot--lines span { height: 1px; background: rgba(28,24,19,0.3); display: block; }
+
+.gate-card--surveillance { background: #0b0f10; color: #cdd3cc; }
+.gate-card--surveillance .gate-card-roman { color: #7f9277; }
+.gate-card--surveillance .gate-card-tag--rec { color: #8B0000; letter-spacing: .18em; }
+.gate-card--surveillance .gate-card-title { color: #e3e7e0; }
+.gate-card--surveillance .gate-card-desc { color: #8b9189; }
+.gate-card-scan {
+  position: absolute; inset: 0; pointer-events: none; opacity: .4;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.5) 3px, rgba(0,0,0,0) 4px);
+}
+.gate-card-foot--cams { position: relative; margin-top: 14px; display: flex; gap: 6px; }
+.gate-card-foot--cams span {
+  flex: 1; height: 30px; border: 1px solid rgba(127,146,119,0.4); position: relative;
+  font-family: 'IBM Plex Mono', monospace; font-size: 7px; color: #7f9277;
+  display: flex; align-items: flex-start; padding: 2px 3px;
+}
+
+.gate-card--interference { background: #0a0506; color: #d8c8c8; }
+.gate-card--interference .gate-card-roman { color: #c11717; }
+.gate-card--interference .gate-card-tag { color: #7a6f64; }
+.gate-card--interference .gate-card-title { color: #ece2d6; }
+.gate-card--interference .gate-card-desc { color: #9a8f8a; }
+.gate-card-scan--tight {
+  opacity: .5;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 1px, rgba(0,0,0,0.6) 2px, rgba(0,0,0,0) 3px);
+}
+.gate-card-cursor {
+  display: inline-block; width: 9px; height: 20px; background: #c11717;
+  margin-left: 4px; vertical-align: middle; animation: abysso-blink 1s steps(1) infinite;
+}
+.gate-card-foot--term {
+  position: relative; margin-top: 14px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; color: #7a6f64; line-height: 1.5;
+}
+.gate-card-corrupt { color: #c11717; }
+
+.gate-hint {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: .18em;
+  color: #4f463f; margin-top: 30px; animation: abysso-gatein .6s .44s both;
+}
+
+/* ── Slot d'authentification, vit dans .mode-switcher-row (voir plus haut) ── */
+@media (max-width: 600px) {
+  .mode-switcher-row { flex-wrap: wrap; justify-content: flex-end; }
+}
+
+/* ── Slot d'authentification sur le Gate (pas de mode switcher à cet écran) ── */
+.gate-auth-slot {
+  position: fixed; top: 12px; right: 12px; z-index: 120;
+}

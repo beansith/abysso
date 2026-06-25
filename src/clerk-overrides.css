@@ -1,0 +1,46 @@
+/* ──────────────────────────────────────────────────────────────────────
+   Surcharge directe des classes Clerk natives (cl-*), méthode "Bring your
+   own CSS" recommandée par Clerk quand les props `elements`/`variables`
+   ne couvrent pas un cas précis. Importé en dernier pour primer en cascade
+   sur le CSS interne des composants Clerk.
+   ────────────────────────────────────────────────────────────────────── */
+
+/* Le bandeau d'en-tête de la carte (titre "Se connecter") gardait un
+   contour/fond visuellement détaché du reste malgré appearance.elements.header —
+   on le neutralise ici directement sur la classe native. */
+.cl-header {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+.cl-header > div {
+  background: transparent !important;
+}
+.cl-cardBox,
+.cl-card {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Logo Apple : rendu noir par défaut, invisible sur fond sombre (Surveillance/
+   Interférence). On le passe en blanc via un filtre, neutre sur fond clair
+   (Clinique) puisqu'on ne l'applique que sur les modes sombres. */
+/* Logo Apple : confirmé via inspection que c'est une <img> chargée depuis
+   img.clerk.com (pas un SVG inline, pas une police d'icône) — donc ni fill
+   ni color ne peuvent la recolorer, seul un filter le peut. Appliqué sur
+   tous les modes, comme demandé. */
+.cl-providerIcon__apple,
+.cl-socialButtonsProviderIcon__apple,
+.cl-socialButtonsBlockButton__apple img {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* "Vous n'avez pas encore de compte ? / S'inscrire" : empile les deux au lieu
+   de les mettre côte à côte, pour éviter le retour à la ligne disgracieux. */
+.cl-footerAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}

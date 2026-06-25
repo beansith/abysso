@@ -1,0 +1,135 @@
+/* ──────────────────────────────────────────────────────────────────────
+   Styles communs aux 3 modes : layout de page, header, lecteur sticky,
+   modal de paywall, équaliseur animé, bannières.
+   Les déclinaisons visuelles par mode vivent dans clinique.css / 
+   surveillance.css / interference.css.
+   ────────────────────────────────────────────────────────────────────── */
+
+.abysso-page {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 40px clamp(16px,4vw,28px) 0;
+}
+body[data-mode='surveillance'] .abysso-page,
+body[data-mode='interference'] .abysso-page { max-width: 1100px; }
+
+.abysso-kicker {
+  font-family: var(--mode-font-mono);
+  font-size: 10px; letter-spacing: .18em; color: var(--mode-text-sub);
+  margin: 0 0 12px;
+}
+
+.abysso-redacted { background: var(--mode-bg-3); color: transparent; user-select: none; padding: 0 4px; }
+
+/* ── Équaliseur animé ── */
+.abysso-eq { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+.abysso-eq span {
+  width: 3px; background: var(--mode-positive); transform-origin: bottom;
+  animation: abysso-eq .8s ease-in-out infinite alternate;
+}
+.abysso-eq--if span { background: var(--mode-accent); }
+
+/* ── Bannière positive (abonnement actif) ── */
+.abysso-positive-banner {
+  margin: 20px 0 0; padding: 13px 18px; font-family: var(--mode-font-mono);
+  font-size: 11px; letter-spacing: .14em; border: 1px solid var(--mode-positive);
+  color: var(--mode-positive); background: color-mix(in srgb, var(--mode-positive) 8%, transparent);
+}
+.abysso-positive-banner--cl,
+.abysso-positive-banner--sv,
+.abysso-positive-banner--if {
+  /* mêmes règles que la classe de base : les modificateurs ne font que documenter
+     l'intention par mode, --mode-positive porte déjà la bonne teinte */
+}
+
+/* ── Lecteur sticky ── */
+.abysso-sticky {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 65;
+  background: var(--mode-bg-2); border-top: 1px solid var(--mode-accent);
+}
+.abysso-sticky-bar { height: 3px; background: var(--mode-border); cursor: pointer; position: relative; }
+.abysso-sticky-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--mode-accent); }
+.abysso-sticky-row {
+  max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 14px;
+  padding: 10px clamp(14px,3vw,26px);
+}
+.abysso-sticky-btn {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--mode-accent); background: transparent; color: var(--mode-accent);
+  cursor: pointer; font-size: 12px;
+}
+.abysso-sticky-btn:hover { background: var(--mode-accent); color: var(--mode-bg); }
+.abysso-sticky-info { flex: 1; min-width: 0; cursor: pointer; }
+.abysso-sticky-title {
+  font-family: var(--mode-font-display); font-size: clamp(15px,2vw,18px); color: var(--mode-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.abysso-sticky-meta {
+  font-family: var(--mode-font-mono); font-size: 9px; letter-spacing: .1em; color: var(--mode-text-faint);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.abysso-sticky-time { flex: none; font-family: var(--mode-font-mono); font-size: 10.5px; color: var(--mode-text-sub); white-space: nowrap; }
+.abysso-sticky-close { flex: none; width: 28px; height: 28px; background: transparent; border: none; color: var(--mode-text-faint); cursor: pointer; font-size: 14px; }
+.abysso-sticky-close:hover { color: var(--mode-text); }
+
+/* ── Overlay de verrouillage sur synopsis ──
+   inset:0 pile, le conteneur parent (.cl-synopsis-wrap, .sv-synopsis-wrap, .if-synopsis-wrap)
+   porte désormais sa propre bordure/padding/overflow:hidden, donc l'overlay reste
+   contenu dans le même cadre visuel au lieu de sembler déborder. */
+.abysso-lock-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 20px;
+  background: color-mix(in srgb, var(--mode-bg) 65%, transparent);
+}
+.abysso-lock-overlay--cl { background: color-mix(in srgb, var(--mode-bg-3) 88%, transparent); }
+.abysso-lock-overlay--sv { background: rgba(7,9,10,0.82); }
+.abysso-lock-overlay--if { background: rgba(10,5,6,0.84); }
+.abysso-lock-title { font-family: var(--mode-font-mono); font-size: 11px; letter-spacing: .2em; color: var(--mode-accent); }
+.abysso-lock-desc { font-family: var(--mode-font-body); font-size: 13.5px; color: var(--mode-text-mute); margin: 10px 0 16px; max-width: 34ch; }
+.abysso-lock-actions {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  font-family: var(--mode-font-mono); font-size: 11px; letter-spacing: .12em;
+}
+.abysso-lock-actions span { cursor: pointer; }
+.abysso-lock-actions span:first-child { color: var(--mode-accent); border-bottom: 1px solid var(--mode-accent); padding-bottom: 2px; }
+.abysso-lock-actions span:last-child { color: var(--mode-text); border-bottom: 1px solid var(--mode-border-strong); padding-bottom: 2px; }
+
+/* ── Modal de paywall ── */
+.abysso-modal-backdrop {
+  position: fixed; inset: 0; z-index: 130; background: rgba(6,4,3,0.85);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.abysso-modal {
+  position: relative; max-width: 440px; width: 100%; padding: clamp(24px,4vw,38px);
+  overflow: hidden; background: var(--mode-bg-2); border: 1px solid var(--mode-accent);
+}
+.abysso-modal-stamp {
+  position: absolute; top: 18px; right: -30px; transform: rotate(8deg);
+  border: 2px solid var(--mode-accent); color: var(--mode-accent-bright);
+  font-family: var(--mode-font-mono); font-size: 11px; letter-spacing: .26em;
+  padding: 5px 32px; pointer-events: none; opacity: .7;
+}
+.abysso-modal-kicker { font-family: var(--mode-font-mono); font-size: 11px; letter-spacing: .22em; color: var(--mode-accent-bright); }
+.abysso-modal-title { font-family: var(--mode-font-display); font-size: clamp(24px,4vw,32px); line-height: 1.1; color: var(--mode-text); margin: 12px 0 4px; }
+.abysso-modal-meta { font-family: var(--mode-font-mono); font-size: 10.5px; letter-spacing: .12em; color: var(--mode-text-faint); }
+.abysso-modal-desc { font-family: var(--mode-font-body); font-size: 14px; line-height: 1.6; color: var(--mode-text-mute); margin: 18px 0 22px; }
+.abysso-modal-btn {
+  width: 100%; background: var(--mode-accent); color: var(--mode-bg); border: 1px solid var(--mode-accent);
+  padding: 15px; font-family: var(--mode-font-mono); font-size: 12px; letter-spacing: .18em; cursor: pointer; margin-bottom: 10px;
+}
+.abysso-modal-btn:hover { background: var(--mode-accent-bright); }
+.abysso-modal-btn:disabled { opacity: .6; cursor: default; }
+.abysso-modal-btn-outline {
+  width: 100%; background: transparent; color: var(--mode-text); border: 1px solid var(--mode-border-strong);
+  padding: 15px; font-family: var(--mode-font-mono); font-size: 12px; letter-spacing: .18em; cursor: pointer;
+}
+.abysso-modal-btn-outline:hover { border-color: var(--mode-accent); }
+.abysso-modal-btn-outline:disabled { opacity: .6; cursor: default; }
+.abysso-modal-later {
+  text-align: center; font-family: var(--mode-font-mono); font-size: 10px; letter-spacing: .18em;
+  color: var(--mode-text-faint); margin-top: 18px; cursor: pointer;
+}
+.abysso-modal-later:hover { color: var(--mode-text-sub); }
+
+/* Variante clinique de la pastille tampon (texte sombre sur fond clair) */
+.abysso-modal--cl .abysso-modal-btn { color: #f2e9e2; }
