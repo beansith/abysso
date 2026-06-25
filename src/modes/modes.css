@@ -304,9 +304,68 @@ body[data-mode='interference'] .abysso-fx--sweep {
   color: #4f463f; margin-top: 30px; animation: abysso-gatein .6s .44s both;
 }
 
-/* ── Slot d'authentification, vit dans .mode-switcher-row (voir plus haut) ── */
+/* ── Slot d'authentification, vit dans .mode-switcher-row (voir plus haut) ──
+   Sur mobile, le badge fixe par-dessus tout chevauchait le header de chaque
+   page (titre, nav). On le sort du flux fixed et on le met en haut de page,
+   dans le flux normal, plus compact. */
 @media (max-width: 600px) {
-  .mode-switcher-row { flex-wrap: wrap; justify-content: flex-end; }
+  .mode-switcher-row {
+    position: static; width: 100%; justify-content: flex-end;
+    flex-wrap: nowrap; gap: 6px; padding: 8px 10px; box-sizing: border-box;
+    background: var(--mode-bg-2); border-bottom: 1px solid var(--mode-border);
+  }
+  .mode-switcher { height: 30px; padding: 0 6px 0 8px; gap: 5px; }
+  .mode-switcher-label { display: none; }
+  .mode-switcher-btn { width: 19px; height: 19px; font-size: 9px; }
+  .mode-switcher-gate { font-size: 11px; }
+  .auth-btn { height: 30px; padding: 0 9px; font-size: 9px; letter-spacing: .08em; }
+  .auth-name { font-size: 9px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gate-auth-slot { position: static !important; }
+
+  /* Logos et grands titres : le clamp() desktop garde un plancher trop haut
+     pour un écran de ~360-400px, on force un plafond plus bas ici. */
+  .cl-logo, .if-logo, .gate-logo { font-size: clamp(40px, 16vw, 64px) !important; word-break: break-word; }
+  .cl-page-title, .if-page-title, .sv-page-title { font-size: clamp(26px, 8vw, 36px) !important; }
+  .cl-feature-title, .sv-feature-title, .if-featured-title { font-size: clamp(22px, 7vw, 32px) !important; max-width: 100% !important; }
+  .cl-dossier-title, .sv-dossier-title, .if-dossier-title { font-size: clamp(22px, 7vw, 32px) !important; max-width: 100% !important; }
+
+  /* Headers de page : le padding-right réservait la place du badge mode
+     fixe, devenu statique sur mobile — on le retire et on laisse les liens
+     de nav passer à la ligne si besoin. */
+  .cl-header-inner, .sv-header, .if-header {
+    padding-right: clamp(12px, 4vw, 22px) !important;
+    flex-wrap: wrap; row-gap: 6px;
+  }
+  .cl-header-nav, .sv-header-link, .if-header-link { font-size: 9.5px; }
+  .cl-header-spacer, .sv-header-spacer, .if-header-spacer { flex-basis: 100%; height: 0; }
+
+  /* Lignes de catalogue : les colonnes fixes (durée, accès) laissaient trop
+     peu de place au titre sur mobile, causant un retour à la ligne lettre
+     par lettre. On passe en deux niveaux : titre en pleine largeur, puis
+     métadonnées + bouton sur une ligne compacte en dessous. */
+  .if-row, .cl-list-row--ep, .sv-card-foot {
+    flex-wrap: wrap; row-gap: 4px;
+  }
+  .if-row-main, .cl-list-ep { flex-basis: 100%; order: 1; }
+  .if-row-dur, .if-row-access, .cl-dur, .cl-access {
+    width: auto !important; order: 2; font-size: 9px !important;
+  }
+  .if-row-play, .cl-play-btn { order: 3; margin-left: auto; }
+  .if-row-icon, .cl-list-num { display: none; }
+
+  /* Filtres de catégories (chips) : laisser respirer et wrapper proprement
+     plutôt que de forcer une grille qui dépasse l'écran. */
+  .if-chips, .sv-chips, .cl-chips {
+    overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px; scrollbar-width: none;
+  }
+  .if-chips::-webkit-scrollbar, .sv-chips::-webkit-scrollbar, .cl-chips::-webkit-scrollbar { display: none; }
+  .if-chip, .sv-chip, .cl-chip { flex: none; white-space: nowrap; }
+
+  /* Marge de sécurité supplémentaire en bas de page : le sticky player
+     prend une part plus importante de l'écran sur mobile. */
+  .abysso-shell { padding-bottom: 120px !important; }
+  .if-window-body { padding-bottom: 24px; }
 }
 
 /* ── Slot d'authentification sur le Gate (pas de mode switcher à cet écran) ── */
